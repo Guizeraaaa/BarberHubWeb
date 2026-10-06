@@ -15,8 +15,6 @@ flutter pub get
 flutter run -d chrome
 ```
 
-Se as alterações ainda estiverem no pull request, faça `git switch feature/flutter-web-landing` antes de executar.
-
 ## Gerar a versão para publicação
 
 ```bash
@@ -36,6 +34,12 @@ python -m http.server 8080 --directory build/web
 ```
 
 Acesse `http://localhost:8080`. O build inclui o CanvasKit localmente e a fonte Barlow está empacotada, sem depender de um CDN de fontes.
+
+## Domínio personalizado
+
+Endereço desejado: **https://www.barberhub.truesprint.com.br/**. O workflow `deploy-pages.yml` prepara a publicação pelo GitHub Pages, com verificações antes do deploy e atualização automática em pushes à branch `main`.
+
+A ativação exige habilitar o Pages no repositório, salvar o domínio nas configurações e criar o registro DNS com o administrador de `truesprint.com.br`. Consulte o [passo a passo e os dados exatos para o administrador](docs/custom-domain.md). A presença do workflow no código não significa que o domínio já esteja ativo.
 
 ## O que está implementado
 
@@ -74,7 +78,7 @@ flutter test
 flutter build web --release --no-web-resources-cdn
 ```
 
-O workflow `.github/workflows/flutter-web.yml` faz essas verificações em pushes e pull requests e disponibiliza o build como artefato. Ele não publica o site automaticamente.
+O workflow `.github/workflows/flutter-web.yml` faz essas verificações em pushes e pull requests e disponibiliza o build como artefato. O workflow separado `.github/workflows/deploy-pages.yml` valida e publica a branch `main` depois de habilitar o GitHub Pages. Ele também pode ser executado manualmente em `main`.
 
 ## Prévias
 
