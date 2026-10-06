@@ -1,0 +1,40 @@
+name: Flutter Web
+
+on:
+  push:
+    branches: [main, 'feature/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FLUTTER_SUPPRESS_ANALYTICS: 'true'
+      DASH__SUPPRESS_ANALYTICS: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Flutter
+        run: |
+          git clone --depth 1 --branch 3.47.6 https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Instalar dependências
+        run: flutter pub get
+      - name: Verificar formatação
+        run: dart format --output=none --set-exit-if-changed lib test tool
+      - name: Analisar código
+        run: flutter analyze
+      - name: Executar testes
+        run: flutter test
+      - name: Gerar build web
+        run: flutter build web --release --no-web-resources-cdn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: barberhub-web
+          path: build/web
+          retention-days: 7
