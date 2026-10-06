@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F6F3ED">
+  <meta name="description" content="Conheça o BarberHub: agendamento de serviços de barbearia e organização da rotina de profissionais. Experimente a demonstração no navegador.">
+  <meta property="og:title" content="BarberHub — Seu estilo. Seu horário.">
+  <meta property="og:description" content="O cuidado de sempre, com a praticidade que faltava. Conheça o projeto e experimente o agendamento.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BarberHub">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
+  <title>BarberHub — Seu estilo. Seu horário.</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #F6F3ED; }
+    #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 24px; text-align: center; font-family: system-ui, sans-serif; color: #171715; }
+    #loading img { width: 56px; height: 56px; margin-bottom: 18px; }
+    #loading h1 { font-size: 24px; margin: 0 0 10px; letter-spacing: -1px; }
+    #loading p { color: #66665F; font-size: 14px; max-width: 360px; }
+    #loading a { color: #171715; }
+    .loader { width: 30px; height: 3px; background: #EE8A3C; margin-top: 18px; animation: breathe 1.2s ease-in-out infinite alternate; }
+    @keyframes breathe { to { width: 80px; opacity: .45; } }
+    @media (prefers-reduced-motion: reduce) { .loader { animation: none; } }
+    noscript { position: fixed; bottom: 24px; left: 24px; right: 24px; text-align: center; font-family: system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <main id="loading" role="status" aria-live="polite">
+    <img src="favicon.svg" alt="" aria-hidden="true">
+    <h1>BARBERHUB</h1>
+    <p>Seu estilo. Seu horário. Sem complicar.</p>
+    <p id="loading-message">Preparando sua experiência…</p>
+    <div class="loader" aria-hidden="true"></div>
+  </main>
+  <noscript>Ative o JavaScript para experimentar o site. <a href="https://github.com/Guizeraaaa/BarberHub/tree/develop" target="_blank" rel="noopener noreferrer">Conheça o projeto BarberHub</a>.</noscript>
+  <script>
+    window.addEventListener('flutter-first-frame', () => document.getElementById('loading')?.remove());
+    window.addEventListener('barberhub-load-error', () => {
+      const message = document.getElementById('loading-message');
+      if (message) message.textContent = 'Não foi possível carregar o site. Confira sua conexão e atualize a página.';
+      document.querySelector('.loader')?.remove();
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
