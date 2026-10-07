@@ -1,0 +1,67 @@
+name: Publicar GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    env:
+      FLUTTER_SUPPRESS_ANALYTICS: 'true'
+      DASH__SUPPRESS_ANALYTICS: 'true'
+    steps:
+      - uses: actions/checkout@v6
+      - name: Instalar Flutter
+        run: |
+          git clone --depth 1 --branch 3.47.6 https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Instalar dependências
+        run: flutter pub get
+      - name: Verificar formatação
+        run: dart format --output=none --set-exit-if-changed lib test tool
+      - name: Analisar código
+        run: flutter analyze
+      - name: Executar testes
+        run: flutter test
+      - name: Consultar configuração do GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Gerar build para o endereço configurado
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          page_base_href="${BASE_PATH%/}/"
+          flutter build web --release --no-web-resources-cdn --base-href "$page_base_href"
+      - name: Preparar artefato de publicação
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar site
+        id: deployment
+        uses: actions/deploy-pages@v4
